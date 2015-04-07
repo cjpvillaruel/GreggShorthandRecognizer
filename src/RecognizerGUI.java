@@ -119,16 +119,17 @@ import org.opencv.ml.CvANN_MLP;
 	        }
 	    }
 		public void initializeTable(JTable testTable){
-			String[] letters = {"l","r"};
+			String[] letters = {"l","r","n"};
 			//openfile for the test set
 			int counter=0;
 			
 			for(int j = 0 ; j < letters.length ; j++){
-				int files = new File("images/letters/"+letters[j]).listFiles().length;
+				int files = new File("images/letters_test/"+letters[j]).listFiles().length;
+				
 				for(int k=1; k <= files; k++){
 					//insert images and classification in table
 					//System.out.print("letters/"+letters[j]+"/"+"letter ("+k+").jpg");
-					ImageIcon image = getImage("letters/"+letters[j]+"/"+"letter ("+k+").jpg");
+					ImageIcon image = getImage("letters_test/"+letters[j]+"/"+"letter ("+k+").jpg");
 					int index= nnetwork.predict(counter);
 					Object[] row= {image, letters[j], letters[index]};
 					DefaultTableModel model = (DefaultTableModel)testTable.getModel();

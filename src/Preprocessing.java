@@ -75,7 +75,7 @@ public class Preprocessing {
 		}
 	}
 	public void convertToBits(String folderpath, String filename){
-		String[] letters = {"l","r"};
+		String[] letters = {"l","r","n"};
 		String test="";
 		for(int j = 0 ; j < letters.length ; j++){
 			int files = new File(folderpath +letters[j]).listFiles().length;
@@ -121,12 +121,12 @@ public class Preprocessing {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		Preprocessing preprocess = new Preprocessing(); 
-		preprocess.convertToBits("images/letters/","trainingdata3.txt");
-		preprocess.convertToBits("images/letters_test/","testdata.txt");
+		//Preprocessing preprocess = new Preprocessing(); 
+		//preprocess.convertToBits("images/letters/","trainingdata3.txt");
+		//preprocess.convertToBits("images/letters_test/","testdata.txt");
 		
 		ANN neuralNetwork= new ANN();
-		neuralNetwork.train();
+		//neuralNetwork.train();
 		//neuralNetwork.predict();
 		//SimpleANN a= new SimpleANN();
 	}
