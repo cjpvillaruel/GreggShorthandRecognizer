@@ -65,10 +65,15 @@ public class Preprocessing {
 			int files = new File("images/letters/"+letters[j]).listFiles().length;
 			for(int k=1; k <= files; k++){
 				Mat letter = Highgui.imread("images/letters/"+letters[j]+"/"+"letter ("+k+").jpg",Highgui.IMREAD_GRAYSCALE);
-				for(int x =0; x< letter.height(); x++){
-					for(int y=0; y< letter.width(); y++){
+				
+            	Mat resizeimage = new Mat();
+            	Size sz = new Size(50,25);
+            	Imgproc.resize( letter, resizeimage, sz );
+            	Highgui.imwrite("images/letters/"+letters[j]+"/"+"resize"+k+".png", resizeimage);
+				for(int x =0; x< resizeimage.height(); x++){
+					for(int y=0; y< resizeimage.width(); y++){
 						//System.out.println(letter.get(x,y)[0]);
-						if(letter.get(x, y)[0] > 0.0)
+						if(resizeimage.get(x, y)[0] > 0.0)
 						test+="0";
 						else test+="1";
 						test+=",";
@@ -80,7 +85,7 @@ public class Preprocessing {
 		}
 		//System.out.print(test);
 		try{
-		File file = new File("trainingdata.txt");
+		File file = new File("trainingdata2.txt");
 		 
 		// if file doesnt exists, then create it
 		if (!file.exists()) {
@@ -100,10 +105,13 @@ public class Preprocessing {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		//Preprocessing preprocess = new Preprocessing(); 
+		Preprocessing preprocess = new Preprocessing(); 
 		//preprocess.convertToBits();
 		
 		ANN neuralNetwork= new ANN();
+		
+		//neuralNetwork.predict();
+		//SimpleANN a= new SimpleANN();
 	}
 
 }
