@@ -26,15 +26,17 @@ public class ANN {
 	 CvANN_MLP ann;
 	 Mat classificationResult;
 	 Mat testing_matrix;
+	 Mat training_matrix, training_matrix_class;
+	 CvANN_MLP_TrainParams params;
 	 public ANN(){
 	    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		 Mat training_matrix= new Mat(TRAINING_SAMPLES,ATTRIBUTES,CvType.CV_32F);
-		 Mat training_matrix_class= new Mat(TRAINING_SAMPLES,CLASSES,CvType.CV_64F);
-		 testing_matrix= new Mat(TRAINING_SAMPLES,ATTRIBUTES,CvType.CV_32F);
+		 training_matrix= new Mat(TRAINING_SAMPLES,ATTRIBUTES,CvType.CV_64F);
+		 training_matrix_class= new Mat(TRAINING_SAMPLES,CLASSES,CvType.CV_64F);
+		 testing_matrix= new Mat(TRAINING_SAMPLES,ATTRIBUTES,CvType.CV_64F);
 		 //System.out.print(training_matrix_class.dump());
 		 
-		 this.readFile("trainingdata2.txt", training_matrix, training_matrix_class);
-		 this.readFile("trainingdata2.txt", testing_matrix, training_matrix_class);
+		 this.readFile("trainingdata3.txt", training_matrix, training_matrix_class);
+		 this.readFile("testdata.txt", testing_matrix, training_matrix_class);
 		 classificationResult= new Mat(1,CLASSES,CvType.CV_32F);
 		
 		 Mat ann_layers= new Mat(3,1, CvType.CV_32S);
@@ -43,7 +45,7 @@ public class ANN {
 		 ann_layers.put(2,0,CLASSES);
 		 ann= new CvANN_MLP(ann_layers);
 		
-		 CvANN_MLP_TrainParams params= new CvANN_MLP_TrainParams();
+		 params= new CvANN_MLP_TrainParams();
 		 params.set_term_crit(new TermCriteria(TermCriteria.MAX_ITER+TermCriteria.EPS, 2000, 0.000001));
 		 params.set_train_method( CvANN_MLP_TrainParams.BACKPROP);
 		 params.set_bp_dw_scale(0.1);
@@ -67,11 +69,11 @@ public class ANN {
 						training_set.put(i, j,Float.parseFloat(data[j]));
 					else{
 						//System.out.print(data[j]);
-						classes.put(i, Integer.parseInt(data[j]), 1);
-//						if(data[j].equals("l")){
-//							classes.put(i, 0, 1);			
-//						}
-//						else classes.put(i, 1, 1);		
+						//classes.put(i, Integer.parseInt(data[j]), 1);
+						if(data[j].equals("l")){
+							classes.put(i, 0, 1);			
+						}
+						else classes.put(i, 1, 1);		
 						
 					}		
 				}
@@ -85,17 +87,15 @@ public class ANN {
 	 }
 	 public void train(){
 		 // Read an image.
-
-		
-		 //int iterations = ann.train(training_matrix, training_matrix_class,new Mat(),new Mat(),params,CvANN_MLP.NO_INPUT_SCALE);
-		 //System.out.print(training_matrix_class.dump());
-		 //System.out.println(iterations);
-		 ann.load("neuralnetwork");
-		 ann.predict(testing_matrix.row(0), classificationResult);
-		 System.out.print(classificationResult.dump()); 
+		 int iterations = ann.train(training_matrix, training_matrix_class,new Mat(),new Mat(),params,CvANN_MLP.NO_INPUT_SCALE);
+		 System.out.print(training_matrix_class.dump());
+		 System.out.println(iterations);
+		 ann.save("ann");
+		 //ann.load("neuralnetwork");
+//		 System.out.print(classificationResult.dump()); 
 	 }
 	 public int predict(int index){
-		 ann.load("neuralnetwork");
+		 ann.load("ann");
 		 ann.predict(testing_matrix.row(index), classificationResult);
 		 //System.out.print(classificationResult.dump());
 		 return getMaximum();

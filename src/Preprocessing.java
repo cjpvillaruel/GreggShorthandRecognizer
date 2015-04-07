@@ -50,7 +50,8 @@ public class Preprocessing {
 	        	for(int x=83;x<destination.width()-150; x+= width+5){
 	        		Rect letter= new Rect(x, y, width, height);
 	        		Mat result = destination.submat(letter);
-	            	Highgui.imwrite("images/test/result"+i+"_"+count+".jpg", result);
+	        		removeBorder(result);
+	            	Highgui.imwrite("images/test1/result"+i+"_"+count+".jpg", result);
 	            	count++;
 	        	}
 	        }
@@ -58,18 +59,33 @@ public class Preprocessing {
 		}
 	}
 	
-	public void convertToBits(){
+	public void removeBorder(Mat character){
+		int x,y;
+		int margin=4;
+		int height= character.height();
+		int width= character.width();
+		for(y=0; y<width; y++){
+			for(x=0;x<width;x++){
+				if(x < margin || x > height-margin || y<margin || y>width-margin){
+					//clean
+					character.put(x,y,255.0);
+			       
+				}
+			}
+		}
+	}
+	public void convertToBits(String folderpath, String filename){
 		String[] letters = {"l","r"};
 		String test="";
 		for(int j = 0 ; j < letters.length ; j++){
-			int files = new File("images/letters/"+letters[j]).listFiles().length;
+			int files = new File(folderpath +letters[j]).listFiles().length;
 			for(int k=1; k <= files; k++){
-				Mat letter = Highgui.imread("images/letters/"+letters[j]+"/"+"letter ("+k+").jpg",Highgui.IMREAD_GRAYSCALE);
+				Mat letter = Highgui.imread(folderpath +letters[j]+"/"+"letter ("+k+").jpg",Highgui.IMREAD_GRAYSCALE);
 				
             	Mat resizeimage = new Mat();
             	Size sz = new Size(50,25);
             	Imgproc.resize( letter, resizeimage, sz );
-            	Highgui.imwrite("images/letters/"+letters[j]+"/"+"resize"+k+".png", resizeimage);
+            	//Highgui.imwrite("images/letters/"+letters[j]+"/"+"resize"+k+".png", resizeimage);
 				for(int x =0; x< resizeimage.height(); x++){
 					for(int y=0; y< resizeimage.width(); y++){
 						//System.out.println(letter.get(x,y)[0]);
@@ -85,7 +101,7 @@ public class Preprocessing {
 		}
 		//System.out.print(test);
 		try{
-		File file = new File("trainingdata2.txt");
+		File file = new File(filename);
 		 
 		// if file doesnt exists, then create it
 		if (!file.exists()) {
@@ -106,10 +122,11 @@ public class Preprocessing {
 		// TODO Auto-generated method stub
 
 		Preprocessing preprocess = new Preprocessing(); 
-		//preprocess.convertToBits();
+		preprocess.convertToBits("images/letters/","trainingdata3.txt");
+		preprocess.convertToBits("images/letters_test/","testdata.txt");
 		
 		ANN neuralNetwork= new ANN();
-		
+		neuralNetwork.train();
 		//neuralNetwork.predict();
 		//SimpleANN a= new SimpleANN();
 	}
